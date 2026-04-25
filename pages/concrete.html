@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concrete Calculator — CivilMate</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .ratio-visual {
+      display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
+    }
+    .ratio-bar {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      font-size: 0.78rem; color: var(--text-muted);
+    }
+    .ratio-fill {
+      width: 36px; border-radius: 6px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(245,166,35,0.3);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 5px;
+      font-size: 0.7rem; font-weight: 700; color: var(--accent);
+    }
+    .info-box {
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .info-box strong { color: var(--text); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--card-border); font-size: 0.88rem; }
+    th { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background: var(--bg2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg2); }
+  </style>
+</head>
+<body>
+
+<div id="page-loader">
+  <div class="loader-logo">Civil<span>Mate</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Civil<span>Mate</span></a>
+  <div class="nav-links">
+    <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="concrete.html" class="active"><i class="fas fa-cube"></i> Concrete</a>
+    <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+    <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+    <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
+    <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+    <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
+    <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    <button class="btn-icon nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+  <a href="concrete.html" class="active"><i class="fas fa-cube"></i> Concrete</a>
+  <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+  <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+  <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
+  <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+  <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
+  <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  <a href="#" id="theme-toggle-mob"><i class="fas fa-sun"></i> Toggle Theme</a>
+</div>
+
+<main class="main-content">
+  <div class="page-header">
+    <div class="tag"><i class="fas fa-cube"></i> Calculator</div>
+    <h1>Concrete <span class="accent">Calculator</span></h1>
+    <p>Calculate concrete volume and material quantities for mix ratio 1:2:4 (M20 grade)</p>
+  </div>
+
+  <div class="grid-2">
+    <!-- Input Card -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-pencil" style="color:var(--accent)"></i> Slab / Member Dimensions</div>
+
+      <div class="info-box">
+        Using <strong>Mix Ratio 1 : 2 : 4</strong> (Cement : Sand : Aggregate) — M20 grade.
+        Dry volume factor = <strong>1.5</strong>. Cement bag = <strong>50 kg</strong>.
+      </div>
+
+      <!-- Mix ratio visual -->
+      <div class="ratio-visual">
+        <div class="ratio-bar">
+          <div class="ratio-fill" style="height:40px">1</div>
+          <span>Cement</span>
+        </div>
+        <div class="ratio-bar">
+          <div class="ratio-fill" style="height:60px">1.5</div>
+          <span>Sand</span>
+        </div>
+        <div class="ratio-bar">
+          <div class="ratio-fill" style="height:80px">3</div>
+          <span>Aggregate</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Unit System</label>
+        <select class="form-control" id="c-unit">
+          <option value="m">Metres (m)</option>
+          <option value="ft">Feet (ft)</option>
+          <option value="in">Inches (in)</option>
+        </select>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Length</label>
+          <input type="number" class="form-control" id="c-length" placeholder="e.g. 5" min="0" step="any" />
+        </div>
+        <div class="form-group">
+          <label>Width</label>
+          <input type="number" class="form-control" id="c-width" placeholder="e.g. 4" min="0" step="any" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Thickness / Depth</label>
+        <input type="number" class="form-control" id="c-thickness" placeholder="e.g. 0.15" min="0" step="any" />
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn btn-primary" style="flex:1" onclick="calcConcrete()">
+          <i class="fas fa-calculator"></i> Calculate
+        </button>
+        <button class="btn btn-secondary" onclick="resetConcrete()">
+          <i class="fas fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <!-- Result -->
+      <div class="result-box" id="concrete-result">
+        <h3><i class="fas fa-chart-bar"></i> &nbsp;Results</h3>
+        <div class="result-row">
+          <span class="label">Wet Volume</span>
+          <span class="value"><span id="r-vol-m3">—</span><span class="unit">m³</span> &nbsp;/&nbsp; <span id="r-vol-ft3">—</span><span class="unit">ft³</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Cement Required</span>
+          <span class="value"><span id="r-cement-bags">—</span><span class="unit">bags</span> &nbsp;(<span id="r-cement-kg">—</span><span class="unit">kg</span>)</span>
+        </div>
+        <div class="result-row">
+          <span class="label">Fine Aggregate (Sand)</span>
+          <span class="value"><span id="r-sand">—</span><span class="unit">m³</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Coarse Aggregate</span>
+          <span class="value"><span id="r-agg">—</span><span class="unit">m³</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference Table -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card">
+        <div class="section-title"><i class="fas fa-table" style="color:var(--accent)"></i> Mix Grade Reference</div>
+        <table>
+          <thead>
+            <tr><th>Grade</th><th>Mix Ratio</th><th>fck (MPa)</th><th>Use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>M10</td><td>1:3:6</td><td>10</td><td>PCC, levelling</td></tr>
+            <tr><td>M15</td><td>1:2:4</td><td>15</td><td>Pathways, slabs</td></tr>
+            <tr><td style="color:var(--accent);font-weight:600">M20 ✓</td><td>1:1.5:3</td><td>20</td><td>RCC slabs, beams</td></tr>
+            <tr><td>M25</td><td>1:1:2</td><td>25</td><td>Columns, bridges</td></tr>
+            <tr><td>M30</td><td>Design Mix</td><td>30</td><td>Prestressed</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><i class="fas fa-lightbulb" style="color:var(--accent)"></i> Quick Tips</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="info-box" style="margin:0">
+            Add <strong>5–10% wastage</strong> to material quantities for site losses.
+          </div>
+          <div class="info-box" style="margin:0">
+            <strong>1 bag of cement</strong> = 50 kg = 0.035 m³
+          </div>
+          <div class="info-box" style="margin:0">
+            Water-cement ratio for M20: <strong>0.45–0.55</strong>
+          </div>
+          <div class="info-box" style="margin:0">
+            Dry volume is <strong>54% more</strong> than wet volume due to compaction.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">Built with ❤️ by <span>CivilMate</span></footer>
+</main>
+
+<script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soil Calculator — CivilMate</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .phase-diagram {
+      display: flex; gap: 0; height: 160px; border-radius: var(--radius-sm);
+      overflow: hidden; border: 1px solid var(--card-border); margin-bottom: 20px;
+    }
+    .phase-col { display: flex; flex-direction: column; }
+    .phase-col:first-child { width: 50px; background: var(--bg3); border-right: 1px solid var(--card-border); display: flex; flex-direction: column; }
+    .phase-label-row { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; color: var(--text-muted); border-bottom: 1px solid var(--card-border); writing-mode: horizontal-tb; padding: 0 6px; text-align: center; }
+    .phase-label-row:last-child { border-bottom: none; }
+    .phase-viz { flex: 1; display: flex; flex-direction: column; }
+    .phase-air   { flex: 1; background: rgba(52,152,219,0.08); border-bottom: 1px dashed var(--card-border); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--blue); }
+    .phase-water { flex: 1; background: rgba(52,152,219,0.2);  border-bottom: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--blue); }
+    .phase-solid { flex: 2; background: rgba(245,166,35,0.18); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 12px; border-bottom: 1px solid var(--card-border); font-size: 0.87rem; text-align: left; }
+    th { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background: var(--bg2); }
+    tr:last-child td { border-bottom: none; }
+    .info-box { background: var(--bg2); border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+    .info-box strong { color: var(--text); }
+    code { font-family: 'Courier New', monospace; background: var(--bg3); padding: 2px 7px; border-radius: 4px; font-size: 0.88em; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<div id="page-loader">
+  <div class="loader-logo">Civil<span>Mate</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Civil<span>Mate</span></a>
+  <div class="nav-links">
+    <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="concrete.html"><i class="fas fa-cube"></i> Concrete</a>
+    <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+    <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+    <a href="soil.html" class="active"><i class="fas fa-mountain"></i> Soil</a>
+    <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+    <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
+    <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    <button class="btn-icon nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+  <a href="concrete.html"><i class="fas fa-cube"></i> Concrete</a>
+  <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+  <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+  <a href="soil.html" class="active"><i class="fas fa-mountain"></i> Soil</a>
+  <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+  <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
+  <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  <a href="#" id="theme-toggle-mob"><i class="fas fa-sun"></i> Toggle Theme</a>
+</div>
+
+<main class="main-content">
+  <div class="page-header">
+    <div class="tag"><i class="fas fa-mountain"></i> Geotechnical</div>
+    <h1>Soil <span class="accent">Calculator</span></h1>
+    <p>Compute void ratio, porosity, degree of saturation, and unit weights from basic soil parameters</p>
+  </div>
+
+  <div class="grid-2">
+    <!-- Input -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-pencil" style="color:var(--accent)"></i> Soil Parameters Input</div>
+
+      <!-- Phase diagram -->
+      <div class="phase-diagram">
+        <div class="phase-col">
+          <div class="phase-label-row">Voids (Vv)</div>
+          <div class="phase-label-row" style="flex:2">Solids (Vs)</div>
+        </div>
+        <div class="phase-viz">
+          <div class="phase-air">Air (Va)</div>
+          <div class="phase-water">Water (Vw)</div>
+          <div class="phase-solid">Solid Particles (Vs)</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Specific Gravity of Solids (Gs)</label>
+        <input type="number" class="form-control" id="s-gs" placeholder="e.g. 2.65" min="0" step="any" />
+        <small style="color:var(--text-dim);font-size:0.76rem">Typical: Sand = 2.65 &nbsp;|&nbsp; Clay = 2.70 &nbsp;|&nbsp; Organic = 1.5–2.0</small>
+      </div>
+      <div class="form-group">
+        <label>Void Ratio (e = Vv / Vs)</label>
+        <input type="number" class="form-control" id="s-e" placeholder="e.g. 0.6" min="0" step="any" />
+        <small style="color:var(--text-dim);font-size:0.76rem">Loose sand ≈ 0.8 &nbsp;|&nbsp; Dense sand ≈ 0.4 &nbsp;|&nbsp; Soft clay ≈ 1.0–2.0</small>
+      </div>
+      <div class="form-group">
+        <label>Water Content / Moisture (w) — decimal</label>
+        <input type="number" class="form-control" id="s-w" placeholder="e.g. 0.20 for 20%" min="0" step="any" />
+        <small style="color:var(--text-dim);font-size:0.76rem">Enter as decimal: 20% → 0.20</small>
+      </div>
+
+      <div class="info-box">
+        Unit weight of water: <strong>γw = 9.81 kN/m³</strong>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn btn-primary" style="flex:1" onclick="calcSoil()">
+          <i class="fas fa-calculator"></i> Calculate
+        </button>
+        <button class="btn btn-secondary" onclick="resetSoil()">
+          <i class="fas fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <!-- Result -->
+      <div class="result-box" id="soil-result">
+        <h3><i class="fas fa-chart-bar"></i> &nbsp;Results</h3>
+        <div class="result-row">
+          <span class="label">Void Ratio (e)</span>
+          <span class="value"><span id="r-s-e">—</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Porosity (n)</span>
+          <span class="value"><span id="r-s-n">—</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Degree of Saturation (S)</span>
+          <span class="value"><span id="r-s-s">—</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Dry Unit Weight (γd)</span>
+          <span class="value"><span id="r-s-yd">—</span><span class="unit">kN/m³</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Saturated Unit Weight (γsat)</span>
+          <span class="value"><span id="r-s-ysat">—</span><span class="unit">kN/m³</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Submerged Unit Weight (γ')</span>
+          <span class="value"><span id="r-s-ysub">—</span><span class="unit">kN/m³</span></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Bulk Unit Weight (γb)</span>
+          <span class="value"><span id="r-s-yb">—</span><span class="unit">kN/m³</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulas + Reference -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card">
+        <div class="section-title"><i class="fas fa-function" style="color:var(--accent)"></i> Formulas Used</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="info-box" style="margin:0"><strong>Porosity:</strong> <code>n = e / (1 + e)</code></div>
+          <div class="info-box" style="margin:0"><strong>Degree of Saturation:</strong> <code>S = Gs·w / e</code></div>
+          <div class="info-box" style="margin:0"><strong>Dry Unit Weight:</strong> <code>γd = Gs·γw / (1 + e)</code></div>
+          <div class="info-box" style="margin:0"><strong>Saturated Unit Weight:</strong> <code>γsat = (Gs + e)·γw / (1 + e)</code></div>
+          <div class="info-box" style="margin:0"><strong>Submerged Unit Weight:</strong> <code>γ' = γsat − γw</code></div>
+          <div class="info-box" style="margin:0"><strong>Bulk Unit Weight:</strong> <code>γb = Gs·γw·(1 + w) / (1 + e)</code></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><i class="fas fa-table" style="color:var(--accent)"></i> Typical Soil Properties</div>
+        <table>
+          <thead>
+            <tr><th>Soil Type</th><th>Gs</th><th>e</th><th>n (%)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Loose gravel</td><td>2.65</td><td>0.65</td><td>39</td></tr>
+            <tr><td>Dense gravel</td><td>2.65</td><td>0.35</td><td>26</td></tr>
+            <tr><td>Loose sand</td><td>2.65</td><td>0.80</td><td>44</td></tr>
+            <tr><td>Dense sand</td><td>2.65</td><td>0.45</td><td>31</td></tr>
+            <tr><td>Soft clay</td><td>2.70</td><td>1.20</td><td>55</td></tr>
+            <tr><td>Stiff clay</td><td>2.70</td><td>0.60</td><td>37</td></tr>
+            <tr><td>Peat</td><td>1.60</td><td>3.00</td><td>75</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">Built with ❤️ by <span>CivilMate</span></footer>
+</main>
+<script src="../script.js"></script>
+</body>
+</html>
