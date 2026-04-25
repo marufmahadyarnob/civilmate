@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CivilMate — Civil Engineering Toolkit</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .hero {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 32px; margin-bottom: 48px; flex-wrap: wrap;
+    }
+    .hero-text h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
+    }
+    .hero-text h1 .line2 { color: var(--accent); display: block; }
+    .hero-text p {
+      margin-top: 14px; color: var(--text-muted);
+      font-size: 1.05rem; max-width: 440px; line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-glow); border: 1px solid rgba(245,166,35,0.25);
+      color: var(--accent); border-radius: 99px;
+      padding: 5px 14px; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .hero-visual {
+      flex-shrink: 0;
+      width: 260px; height: 220px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-visual-inner {
+      font-size: 6rem; opacity: 0.18;
+      position: absolute; transform: rotate(-15deg);
+    }
+    .hero-visual-content {
+      position: relative; z-index: 1; text-align: center;
+    }
+    .hero-visual-content .big-num {
+      font-family: var(--font-display);
+      font-size: 2.6rem; font-weight: 800; color: var(--accent);
+    }
+    .hero-visual-content p { font-size: 0.82rem; color: var(--text-muted); }
+    @media(max-width:600px) { .hero-visual { display: none; } }
+
+    /* Quick stats */
+    .quick-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      margin-bottom: 40px;
+    }
+    @media(max-width:700px) { .quick-stats { grid-template-columns: repeat(2,1fr); } }
+    .qs-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+    .qs-icon { font-size: 1.2rem; color: var(--accent); margin-bottom: 8px; }
+    .qs-val { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; }
+    .qs-label { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="page-loader">
+  <div class="loader-logo">Civil<span>Mate</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="nav-brand">Civil<span>Mate</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active"><i class="fas fa-house"></i> Home</a>
+    <a href="pages/concrete.html"><i class="fas fa-cube"></i> Concrete</a>
+    <a href="pages/brick.html"><i class="fas fa-th"></i> Brick</a>
+    <a href="pages/converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+    <a href="pages/soil.html"><i class="fas fa-mountain"></i> Soil</a>
+    <a href="pages/cost.html"><i class="fas fa-calculator"></i> Cost</a>
+    <a href="pages/notes.html"><i class="fas fa-book-open"></i> Notes</a>
+    <a href="pages/mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    <button class="btn-icon nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html"><i class="fas fa-house"></i> Home</a>
+  <a href="pages/concrete.html"><i class="fas fa-cube"></i> Concrete Calculator</a>
+  <a href="pages/brick.html"><i class="fas fa-th"></i> Brick Calculator</a>
+  <a href="pages/converter.html"><i class="fas fa-arrows-left-right"></i> Unit Converter</a>
+  <a href="pages/soil.html"><i class="fas fa-mountain"></i> Soil Calculator</a>
+  <a href="pages/cost.html"><i class="fas fa-calculator"></i> Cost Estimator</a>
+  <a href="pages/notes.html"><i class="fas fa-book-open"></i> Notes</a>
+  <a href="pages/mcq.html"><i class="fas fa-circle-question"></i> MCQ Practice</a>
+  <a href="#" id="theme-toggle-mob"><i class="fas fa-sun"></i> Toggle Theme</a>
+</div>
+
+<main class="main-content">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-badge"><i class="fas fa-hard-hat"></i> Civil Engineering Toolkit</div>
+      <h1>Your Smart<span class="line2">Engineering Partner</span></h1>
+      <p>Calculators, converters, MCQ practice, formula notes, cost estimation & project planning — all in one offline-ready app.</p>
+      <div class="hero-actions">
+        <a href="pages/concrete.html" class="btn btn-primary"><i class="fas fa-cube"></i> Start Calculating</a>
+        <a href="pages/mcq.html" class="btn btn-secondary"><i class="fas fa-circle-question"></i> Practice MCQs</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-inner">🏗️</div>
+      <div class="hero-visual-content">
+        <div class="big-num">8+</div>
+        <p>Engineering Tools</p>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
+          <span class="badge badge-green" style="justify-content:center">✓ Offline Ready</span>
+          <span class="badge badge-blue" style="justify-content:center">✓ Free Forever</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats">
+    <div class="qs-card">
+      <div class="qs-icon"><i class="fas fa-tools"></i></div>
+      <div class="qs-val text-accent">8+</div>
+      <div class="qs-label">Tools Available</div>
+    </div>
+    <div class="qs-card">
+      <div class="qs-icon"><i class="fas fa-circle-question"></i></div>
+      <div class="qs-val text-accent">20</div>
+      <div class="qs-label">MCQ Questions</div>
+    </div>
+    <div class="qs-card">
+      <div class="qs-icon"><i class="fas fa-book"></i></div>
+      <div class="qs-val text-accent">30+</div>
+      <div class="qs-label">Formulas</div>
+    </div>
+    <div class="qs-card">
+      <div class="qs-icon"><i class="fas fa-wifi"></i></div>
+      <div class="qs-val text-accent">0</div>
+      <div class="qs-label">Backend Required</div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="section-title"><i class="fas fa-grid-2" style="color:var(--accent)"></i> All Tools</div>
+  <div class="features-grid">
+
+    <a href="pages/concrete.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-cube"></i></div>
+      <div class="dash-card-title">Concrete Calculator</div>
+      <div class="dash-card-desc">Calculate volume, cement bags, sand & aggregate quantities based on mix ratio 1:1.5:3.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/brick.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-th"></i></div>
+      <div class="dash-card-title">Brick Calculator</div>
+      <div class="dash-card-desc">Estimate number of bricks and mortar required for any wall area.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/converter.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-arrows-left-right"></i></div>
+      <div class="dash-card-title">Unit Converter</div>
+      <div class="dash-card-desc">Convert between m↔ft, kN↔kg, m³↔ft³, area, pressure, and temperature units.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/soil.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-mountain"></i></div>
+      <div class="dash-card-title">Soil Calculator</div>
+      <div class="dash-card-desc">Compute void ratio, porosity, dry unit weight, saturated and bulk unit weights.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/cost.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-calculator"></i></div>
+      <div class="dash-card-title">Cost Estimator</div>
+      <div class="dash-card-desc">Build a detailed cost estimate by adding items with quantities and rates. Auto-totalled.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/notes.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-book-open"></i></div>
+      <div class="dash-card-title">Formula Notes</div>
+      <div class="dash-card-desc">Quick-reference formulas for concrete, soil, beams, columns, hydraulics and more.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/mcq.html" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-circle-question"></i></div>
+      <div class="dash-card-title">MCQ Practice</div>
+      <div class="dash-card-desc">20 shuffled civil engineering MCQs with instant feedback and explanations.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+    <a href="pages/notes.html#planner" class="dash-card">
+      <div class="dash-card-icon"><i class="fas fa-list-check"></i></div>
+      <div class="dash-card-title">Project Planner</div>
+      <div class="dash-card-desc">Add, track, and complete project tasks. Data saved locally — persists across sessions.</div>
+      <div class="dash-card-arrow">Open Tool <i class="fas fa-arrow-right"></i></div>
+    </a>
+
+  </div>
+
+  <footer class="footer">
+    Built with ❤️ by <span>CivilMate</span> · Offline-first Civil Engineering Toolkit · No backend required
+  </footer>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
