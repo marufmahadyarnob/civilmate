@@ -6,6 +6,16 @@
   <title>Concrete Calculator — CivilMate</title>
   <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- ===== Favicon of Browser Tab  ===== -->
+    <link rel="icon" type="image/png" href="https://arnob.bro.bd/civilmate/image/favicon.png">
+
+<!-- ===== Preview for link sharing ===== -->
+    <meta property="og:title" content="CivilMate | Your Smart Engineering Partner">
+    <meta property="og:description" content="Calculators, converters, MCQ practice, formula notes, cost estimation & project planning — all in one offline-ready.">
+    <meta property="og:image" content="https://arnob.bro.bd/civilmate/image/preview.png">
+    <meta property="og:url" content="https://arnob.bro.bd/civilmate/concrete/">
+    <meta property="og:type" content="website"> 
+ 
   <style>
     .ratio-visual {
       display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
@@ -48,16 +58,16 @@
 </div>
 
 <nav class="navbar">
-  <a href="../index.html" class="nav-brand">Civil<span>Mate</span></a>
+  <a href="/civilmate/" class="nav-brand">Civil<span>Mate</span></a>
   <div class="nav-links">
-    <a href="../index.html"><i class="fas fa-house"></i> Home</a>
-    <a href="concrete.html" class="active"><i class="fas fa-cube"></i> Concrete</a>
-    <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
-    <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
-    <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
-    <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
-    <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
-    <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+    <a href="/civilmate/" class="active"><i class="fas fa-house"></i> Home</a>
+    <a href="/civilmate/concrete"><i class="fas fa-cube"></i> Concrete</a>
+    <a href="/civilmate/brick/"><i class="fas fa-th"></i> Brick</a>
+    <a href="/civilmate/converter"><i class="fas fa-arrows-left-right"></i> Converter</a>
+    <a href="/civilmate/soil"><i class="fas fa-mountain"></i> Soil</a>
+    <a href="/civilmate/cost"><i class="fas fa-calculator"></i> Cost</a>
+    <a href="/civilmate/notes"><i class="fas fa-book-open"></i> Notes</a>
+    <a href="/civilmate/mcq"><i class="fas fa-circle-question"></i> MCQ</a>
   </div>
   <div class="nav-actions">
     <button class="btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
@@ -65,14 +75,14 @@
   </div>
 </nav>
 <div class="mobile-menu" id="mobile-menu">
-  <a href="../index.html"><i class="fas fa-house"></i> Home</a>
-  <a href="concrete.html" class="active"><i class="fas fa-cube"></i> Concrete</a>
-  <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
-  <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
-  <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
-  <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
-  <a href="notes.html"><i class="fas fa-book-open"></i> Notes</a>
-  <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  <a href="/civilmate/"><i class="fas fa-house"></i> Home</a>
+  <a href="/civilmate/concrete"><i class="fas fa-cube"></i> Concrete Calculator</a>
+  <a href="/civilmate/brick"><i class="fas fa-th"></i> Brick Calculator</a>
+  <a href="/civilmate/converter"><i class="fas fa-arrows-left-right"></i> Unit Converter</a>
+  <a href="/civilmate/soil"><i class="fas fa-mountain"></i> Soil Calculator</a>
+  <a href="/civilmate/cost"><i class="fas fa-calculator"></i> Cost Estimator</a>
+  <a href="/civilmate/notes"><i class="fas fa-book-open"></i> Notes</a>
+  <a href="/civilmate/mcq"><i class="fas fa-circle-question"></i> MCQ Practice</a>
   <a href="#" id="theme-toggle-mob"><i class="fas fa-sun"></i> Toggle Theme</a>
 </div>
 
@@ -80,7 +90,7 @@
   <div class="page-header">
     <div class="tag"><i class="fas fa-cube"></i> Calculator</div>
     <h1>Concrete <span class="accent">Calculator</span></h1>
-    <p>Calculate concrete volume and material quantities for mix ratio 1:2:4 (M20 grade)</p>
+    <p>Calculate concrete volume and material quantities for mix ratio 1:1.5:3 (M20 grade)</p>
   </div>
 
   <div class="grid-2">
@@ -89,7 +99,7 @@
       <div class="section-title"><i class="fas fa-pencil" style="color:var(--accent)"></i> Slab / Member Dimensions</div>
 
       <div class="info-box">
-        Using <strong>Mix Ratio 1 : 2 : 4</strong> (Cement : Sand : Aggregate) — M20 grade.
+        Using <strong>Mix Ratio 1 : 1.5 : 3</strong> (Cement : Sand : Aggregate) — M20 grade.
         Dry volume factor = <strong>1.5</strong>. Cement bag = <strong>50 kg</strong>.
       </div>
 
@@ -174,7 +184,7 @@
           <tbody>
             <tr><td>M10</td><td>1:3:6</td><td>10</td><td>PCC, levelling</td></tr>
             <tr><td>M15</td><td>1:2:4</td><td>15</td><td>Pathways, slabs</td></tr>
-            <tr><td style="color:var(--accent);font-weight:600">M20 ✓</td><td>1:2:4</td><td>20</td><td>RCC slabs, beams</td></tr>
+            <tr><td style="color:var(--accent);font-weight:600">M20 ✓</td><td>1:1.5:3</td><td>20</td><td>RCC slabs, beams</td></tr>
             <tr><td>M25</td><td>1:1:2</td><td>25</td><td>Columns, bridges</td></tr>
             <tr><td>M30</td><td>Design Mix</td><td>30</td><td>Prestressed</td></tr>
           </tbody>
