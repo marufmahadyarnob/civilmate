@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes & Planner — CivilMate</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .tab-bar {
+      display: flex; gap: 4px;
+      background: var(--bg2);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 4px; margin-bottom: 28px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 1; min-width: 110px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--text-muted);
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--accent);
+      box-shadow: var(--shadow-card);
+    }
+    .tab-btn:hover:not(.active) { color: var(--text); background: var(--bg3); }
+    .tab-panel { display: none; animation: pageIn 0.3s ease; }
+    .tab-panel.active { display: block; }
+
+    /* Formulas */
+    code { font-family: 'Courier New', monospace; background: var(--bg3); padding: 2px 8px; border-radius: 4px; font-size: 0.88em; color: var(--accent); }
+
+    /* Task filter */
+    .task-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .task-filter-btn {
+      padding: 6px 14px; border-radius: 99px;
+      font-size: 0.8rem; font-weight: 600;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted); background: var(--bg2);
+      transition: all var(--transition);
+    }
+    .task-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .task-filter-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .task-progress-wrap { margin-bottom: 16px; }
+    .task-stats { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+    .task-stat { font-size: 0.82rem; color: var(--text-muted); }
+    .task-stat strong { color: var(--text); }
+
+    /* Image upload area */
+    .img-upload-area {
+      border: 2px dashed var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-bottom: 14px;
+    }
+    .img-upload-area:hover { border-color: var(--accent); background: var(--accent-glow); }
+    .img-upload-area i { font-size: 2rem; color: var(--text-dim); margin-bottom: 8px; }
+    .img-upload-area p { font-size: 0.85rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<div id="page-loader">
+  <div class="loader-logo">Civil<span>Mate</span></div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Civil<span>Mate</span></a>
+  <div class="nav-links">
+    <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+    <a href="concrete.html"><i class="fas fa-cube"></i> Concrete</a>
+    <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+    <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+    <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
+    <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+    <a href="notes.html" class="active"><i class="fas fa-book-open"></i> Notes</a>
+    <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fas fa-sun"></i></button>
+    <button class="btn-icon nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="../index.html"><i class="fas fa-house"></i> Home</a>
+  <a href="concrete.html"><i class="fas fa-cube"></i> Concrete</a>
+  <a href="brick.html"><i class="fas fa-th"></i> Brick</a>
+  <a href="converter.html"><i class="fas fa-arrows-left-right"></i> Converter</a>
+  <a href="soil.html"><i class="fas fa-mountain"></i> Soil</a>
+  <a href="cost.html"><i class="fas fa-calculator"></i> Cost</a>
+  <a href="notes.html" class="active"><i class="fas fa-book-open"></i> Notes</a>
+  <a href="mcq.html"><i class="fas fa-circle-question"></i> MCQ</a>
+  <a href="#" id="theme-toggle-mob"><i class="fas fa-sun"></i> Toggle Theme</a>
+</div>
+
+<main class="main-content">
+  <div class="page-header">
+    <div class="tag"><i class="fas fa-book-open"></i> Reference</div>
+    <h1>Notes &amp; <span class="accent">Planner</span></h1>
+    <p>Formula quick-reference, project task tracker, and image notes — all saved locally</p>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="formulas"><i class="fas fa-function"></i> Formulas</button>
+    <button class="tab-btn" data-tab="planner"><i class="fas fa-list-check"></i> Project Planner</button>
+    <button class="tab-btn" data-tab="imgnotes"><i class="fas fa-image"></i> Image Notes</button>
+  </div>
+
+  <!-- ===== TAB: FORMULAS ===== -->
+  <div class="tab-panel active" id="tab-formulas">
+
+    <div class="notes-section">
+      <h2><i class="fas fa-cube"></i> Concrete & Mix Design</h2>
+      <div class="formula-card">
+        <div class="formula-name">Dry Volume Factor</div>
+        <div class="formula-eq">Dry Vol = Wet Vol × 1.54</div>
+        <div class="formula-desc">Cement, sand and aggregate in dry state occupy ~54% more volume due to voids and compaction.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Cement Quantity (M20 – 1:1.5:3)</div>
+        <div class="formula-eq">Cement = (1/5.5) × Dry Vol × 1440 / 50 bags</div>
+        <div class="formula-desc">Total ratio = 1+1.5+3 = 5.5. Density of cement ≈ 1440 kg/m³. 1 bag = 50 kg.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Water-Cement Ratio</div>
+        <div class="formula-eq">W/C = Water (kg) / Cement (kg)</div>
+        <div class="formula-desc">Lower W/C → higher strength. For M20: W/C = 0.45–0.55.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Compressive Strength (IS 456)</div>
+        <div class="formula-eq">fck = Characteristic compressive strength at 28 days</div>
+        <div class="formula-desc">M20 → fck = 20 MPa. Design strength fd = 0.67 × fck / γm.</div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h2><i class="fas fa-mountain"></i> Soil Mechanics</h2>
+      <div class="formula-card">
+        <div class="formula-name">Void Ratio</div>
+        <div class="formula-eq">e = Vv / Vs</div>
+        <div class="formula-desc">Volume of voids divided by volume of solids. Ranges 0.3–3 for soils.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Porosity</div>
+        <div class="formula-eq">n = e / (1 + e) = Vv / V</div>
+        <div class="formula-desc">Fraction of total volume occupied by voids. n ranges 0–1.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Dry Unit Weight</div>
+        <div class="formula-eq">γd = Gs·γw / (1 + e)</div>
+        <div class="formula-desc">Unit weight of soil with no water content.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Terzaghi's Bearing Capacity</div>
+        <div class="formula-eq">qu = c·Nc + q·Nq + 0.5·γ·B·Nγ</div>
+        <div class="formula-desc">Ultimate bearing capacity for shallow strip footings. Nc, Nq, Nγ are bearing capacity factors.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Darcy's Law</div>
+        <div class="formula-eq">v = k · i</div>
+        <div class="formula-desc">Seepage velocity v = coefficient of permeability k × hydraulic gradient i.</div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h2><i class="fas fa-archway"></i> Structural Engineering</h2>
+      <div class="formula-card">
+        <div class="formula-name">Bending Moment (Simply Supported, UDL)</div>
+        <div class="formula-eq">M = w·L² / 8</div>
+        <div class="formula-desc">Maximum bending moment at midspan. w = UDL (kN/m), L = span (m).</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Shear Force (Simply Supported)</div>
+        <div class="formula-eq">V = w·L / 2</div>
+        <div class="formula-desc">Maximum shear force at supports for a uniformly distributed load.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Euler's Column Buckling</div>
+        <div class="formula-eq">Pcr = π²·E·I / (Le)²</div>
+        <div class="formula-desc">Critical load for slender column. Le = effective length. E = modulus of elasticity.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Section Modulus</div>
+        <div class="formula-eq">Z = I / y</div>
+        <div class="formula-desc">I = moment of inertia, y = distance from NA. For rectangular: Z = bd²/6.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Bending Stress</div>
+        <div class="formula-eq">σ = M / Z = M·y / I</div>
+        <div class="formula-desc">Flexural stress at a fibre located at distance y from the neutral axis.</div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h2><i class="fas fa-droplet"></i> Hydraulics & Fluid Mechanics</h2>
+      <div class="formula-card">
+        <div class="formula-name">Bernoulli's Equation</div>
+        <div class="formula-eq">P/γ + v²/2g + z = constant</div>
+        <div class="formula-desc">Sum of pressure head, velocity head and datum head is constant along a streamline.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Manning's Equation</div>
+        <div class="formula-eq">V = (1/n) · R^(2/3) · S^(1/2)</div>
+        <div class="formula-desc">Open channel flow velocity. n = Manning's roughness, R = hydraulic radius, S = slope.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">Continuity Equation</div>
+        <div class="formula-eq">A₁V₁ = A₂V₂ = Q</div>
+        <div class="formula-desc">Conservation of mass for incompressible flow. Q = discharge (m³/s).</div>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <h2><i class="fas fa-road"></i> Transportation Engineering</h2>
+      <div class="formula-card">
+        <div class="formula-name">Stopping Sight Distance</div>
+        <div class="formula-eq">SSD = v·t + v²/(2·g·f)</div>
+        <div class="formula-desc">v = design speed (m/s), t = reaction time (2.5s), f = friction coefficient.</div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">CBR (California Bearing Ratio)</div>
+        <div class="formula-eq">CBR = (Test load / Standard load) × 100</div>
+        <div class="formula-desc">Used to design flexible pavement thickness. Higher CBR → thinner pavement needed.</div>
+      </div>
+    </div>
+
+  </div><!-- /tab-formulas -->
+
+  <!-- ===== TAB: PROJECT PLANNER ===== -->
+  <div class="tab-panel" id="tab-planner" id="planner">
+    <div class="card">
+      <div class="section-title"><i class="fas fa-list-check" style="color:var(--accent)"></i> Project Task Planner</div>
+
+      <!-- Stats -->
+      <div class="task-stats">
+        <span class="task-stat">Total: <strong id="task-total">0</strong></span>
+        <span class="task-stat">Done: <strong id="task-done" style="color:var(--green)">0</strong></span>
+        <span class="task-stat">Pending: <strong id="task-pending" style="color:var(--accent)">0</strong></span>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="task-progress-wrap">
+        <div class="mcq-progress-bar">
+          <div class="mcq-progress-fill" id="task-progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="task-filter-bar">
+        <button class="task-filter-btn active" data-filter="all">All</button>
+        <button class="task-filter-btn" data-filter="pending">Pending</button>
+        <button class="task-filter-btn" data-filter="done">Completed</button>
+      </div>
+
+      <!-- Add Task -->
+      <div class="task-input-row">
+        <input type="text" class="form-control" id="task-input" placeholder="Add a new task…" />
+        <button class="btn btn-primary" onclick="addTask()"><i class="fas fa-plus"></i> Add</button>
+        <button class="btn btn-secondary" onclick="clearDoneTasks()" title="Clear completed"><i class="fas fa-broom"></i></button>
+      </div>
+
+      <!-- Task List -->
+      <div class="task-list" id="task-list"></div>
+    </div>
+  </div><!-- /tab-planner -->
+
+  <!-- ===== TAB: IMAGE NOTES ===== -->
+  <div class="tab-panel" id="tab-imgnotes">
+    <div class="card mb-6">
+      <div class="section-title"><i class="fas fa-image" style="color:var(--accent)"></i> Upload Image Note</div>
+
+      <label class="img-upload-area" for="img-upload">
+        <i class="fas fa-cloud-arrow-up"></i>
+        <p>Click to select image or drag & drop</p>
+        <small style="color:var(--text-dim)">JPG, PNG, GIF, WebP supported</small>
+      </label>
+      <input type="file" id="img-upload" accept="image/*" style="display:none" />
+
+      <div class="form-group">
+        <label>Note / Caption</label>
+        <textarea class="form-control" id="img-note-text" rows="2" placeholder="Add a note about this image…"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="addImgNote()"><i class="fas fa-save"></i> Save Image Note</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><i class="fas fa-images" style="color:var(--accent)"></i> Saved Image Notes</div>
+      <div class="img-note-grid" id="img-note-grid"></div>
+    </div>
+  </div><!-- /tab-imgnotes -->
+
+  <footer class="footer">Built with ❤️ by <span>CivilMate</span></footer>
+</main>
+
+<script src="../script.js"></script>
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Auto-open planner if hash
+  if (window.location.hash === '#planner') {
+    document.querySelector('[data-tab="planner"]').click();
+  }
+
+  // Image upload preview on change
+  document.getElementById('img-upload').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const area = document.querySelector('.img-upload-area');
+    area.innerHTML = `<i class="fas fa-image" style="color:var(--accent)"></i><p style="color:var(--accent)">${file.name}</p><small style="color:var(--text-dim)">${(file.size/1024).toFixed(1)} KB selected</small>`;
+  });
+</script>
+</body>
+</html>
