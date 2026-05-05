@@ -106,15 +106,15 @@
       <!-- Mix ratio visual -->
       <div class="ratio-visual">
         <div class="ratio-bar">
-          <div class="ratio-fill" style="height:40px">1</div>
+          <div class="ratio-fill" id="r-cement-bar">1</div>
           <span>Cement</span>
         </div>
         <div class="ratio-bar">
-          <div class="ratio-fill" style="height:60px">1.5</div>
+          <div class="ratio-fill" id="r-sand-bar">1.5</div>
           <span>Sand</span>
         </div>
         <div class="ratio-bar">
-          <div class="ratio-fill" style="height:120px">3</div>
+          <div class="ratio-fill" id="r-agg-bar">3</div>
           <span>Aggregate</span>
         </div>
       </div>
@@ -125,6 +125,15 @@
           <option value="m">Metres (m)</option>
           <option value="ft">Feet (ft)</option>
           <option value="in">Inches (in)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Concrete Grade</label>
+        <select class="form-control" id="c-grade">
+          <option value="M10">M10 (1:3:6)</option>
+          <option value="M15">M15 (1:2:4)</option>
+          <option value="M20" selected>M20 (1:1.5:3)</option>
+          <option value="M25">M25 (1:1:2)</option>
         </select>
       </div>
       <div class="grid-2">
