@@ -180,10 +180,13 @@ function updateRatioVisual(mix) {
 /* ================================================
    AUTO UPDATE ON GRADE CHANGE
    ================================================ */
-document.getElementById('c-grade').addEventListener('change', function () {
-  const grade = this.value;
-  updateRatioVisual(mixMap[grade]);
-});
+
+const gradeEl = document.getElementById('c-grade');
+if (gradeEl) {
+  gradeEl.addEventListener('change', function () {
+    updateRatioVisual(mixMap[this.value]);
+  });
+}
 
 
 /* ================================================
