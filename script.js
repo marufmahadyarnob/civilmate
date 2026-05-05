@@ -80,47 +80,120 @@ function globalInit() {
 }
 
 /* ================================================
-   CONCRETE CALCULATOR
+   CONCRETE CALCULATOR — FINAL VERSION
+   ================================================ */
+
+// 🔥 Grade-wise ratio map (global করলে reuse করা সহজ)
+const mixMap = {
+  M10: { c:1, s:3, a:6 },
+  M15: { c:1, s:2, a:4 },
+  M20: { c:1, s:1.5, a:3 },
+  M25: { c:1, s:1, a:2 }
+};
+
+
+/* ================================================
+   CALCULATE FUNCTION
    ================================================ */
 function calcConcrete() {
+
   const L = parseFloat(document.getElementById('c-length').value);
   const W = parseFloat(document.getElementById('c-width').value);
   const T = parseFloat(document.getElementById('c-thickness').value);
-  const unit = document.getElementById('c-unit').value;
-  const res = document.getElementById('concrete-result');
+  const unit  = document.getElementById('c-unit').value;
+  const grade = document.getElementById('c-grade').value;
+  const res   = document.getElementById('concrete-result');
 
   if (isNaN(L) || isNaN(W) || isNaN(T) || L <= 0 || W <= 0 || T <= 0) {
-    showToast('Please enter valid positive values.', 'error'); return;
+    showToast('Please enter valid positive values.', 'error');
+    return;
   }
 
-  let vol = L * W * T; // in chosen unit cubed
+  const mix = mixMap[grade];
+
+  let vol = L * W * T;
   let volM3 = vol;
-  if (unit === 'ft') volM3 = vol * 0.0283168; // ft³ → m³
-  if (unit === 'in') volM3 = vol * 0.000016387; // in³ → m³
 
-  // Mix ratio 1:2:4, dry volume ≈ 1.5 × wet volume
+  if (unit === 'ft') volM3 = vol * 0.0283168;
+  if (unit === 'in') volM3 = vol * 0.000016387;
+
+  // 🔥 Update ratio visual
+  updateRatioVisual(mix);
+
+  // Dry volume factor
   const dryVol = volM3 * 1.5;
-  const ratio   = 1 + 2 + 4; // = 5.5
-  const cementBags  = (dryVol / ratio) * 1440 / 50; // bags of 50kg
-  const sandM3      = (1.5 / ratio) * dryVol;
-  const aggregateM3 = (3   / ratio) * dryVol;
-  const cementKg    = cementBags * 50;
 
-  document.getElementById('r-vol-m3').textContent    = volM3.toFixed(3);
-  document.getElementById('r-vol-ft3').textContent   = (volM3 * 35.3147).toFixed(3);
+  const ratio = mix.c + mix.s + mix.a;
+
+  // Cement
+  const cementKg   = (mix.c / ratio) * dryVol * 1440;
+  const cementBags = cementKg / 50;
+
+  // Sand & Aggregate
+  const sandM3      = (mix.s / ratio) * dryVol;
+  const aggregateM3 = (mix.a / ratio) * dryVol;
+
+  // Output
+  document.getElementById('r-vol-m3').textContent  = volM3.toFixed(3);
+  document.getElementById('r-vol-ft3').textContent = (volM3 * 35.3147).toFixed(3);
+
   document.getElementById('r-cement-bags').textContent = cementBags.toFixed(2);
   document.getElementById('r-cement-kg').textContent   = cementKg.toFixed(2);
-  document.getElementById('r-sand').textContent        = sandM3.toFixed(3);
-  document.getElementById('r-agg').textContent         = aggregateM3.toFixed(3);
+
+  document.getElementById('r-sand').textContent = sandM3.toFixed(3);
+  document.getElementById('r-agg').textContent  = aggregateM3.toFixed(3);
 
   res.classList.add('show');
-  showToast('Concrete calculated successfully!');
+
+  showToast(`${grade} Concrete calculated!`);
 }
 
+
+/* ================================================
+   RESET FUNCTION
+   ================================================ */
 function resetConcrete() {
-  ['c-length','c-width','c-thickness'].forEach(id => document.getElementById(id).value = '');
+  ['c-length','c-width','c-thickness'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
   document.getElementById('concrete-result').classList.remove('show');
 }
+
+
+/* ================================================
+   RATIO VISUAL UPDATE
+   ================================================ */
+function updateRatioVisual(mix) {
+
+  document.getElementById('r-cement-bar').style.height = (mix.c * 40) + 'px';
+  document.getElementById('r-cement-bar').textContent  = mix.c;
+
+  document.getElementById('r-sand-bar').style.height = (mix.s * 40) + 'px';
+  document.getElementById('r-sand-bar').textContent  = mix.s;
+
+  document.getElementById('r-agg-bar').style.height = (mix.a * 40) + 'px';
+  document.getElementById('r-agg-bar').textContent  = mix.a;
+}
+
+
+/* ================================================
+   AUTO UPDATE ON GRADE CHANGE
+   ================================================ */
+document.getElementById('c-grade').addEventListener('change', function () {
+  const grade = this.value;
+  updateRatioVisual(mixMap[grade]);
+});
+
+
+/* ================================================
+   INITIAL LOAD
+   ================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  updateRatioVisual(mixMap['M20']); // default
+});
+
+/*==================================================================================================== */
 
 /* ================================================
    BRICK CALCULATOR
