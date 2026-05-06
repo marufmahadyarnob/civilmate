@@ -76,115 +76,209 @@
 
   <div class="grid-2">
     <!-- Input Card -->
-    <div class="card">
-      <div class="section-title"><i class="fas fa-pencil" style="color:var(--accent)"></i> Wall Parameters</div>
+<div class="card">
+  <div class="section-title">
+    <i class="fas fa-pencil" style="color:var(--accent)"></i> Wall Parameters
+  </div>
 
-      <!-- Brick visual decoration -->
-      <div class="brick-visual" id="brick-anim">
-        <div class="brick-cell"></div><div class="brick-cell"></div><div class="brick-cell"></div>
-        <div class="brick-cell"></div><div class="brick-cell"></div><div class="brick-cell"></div>
-        <div class="brick-cell"></div><div class="brick-cell"></div><div class="brick-cell"></div>
-        <div class="brick-cell"></div><div class="brick-cell"></div><div class="brick-cell"></div>
-      </div>
+  <!-- Unit -->
+  <div class="form-group">
+    <label>Unit</label>
+    <select class="form-control" id="b-unit">
+      <option value="m">Meter (m)</option>
+      <option value="mm">Millimeter (mm)</option>
+      <option value="ft">Feet (ft)</option>
+      <option value="in">Inch (in)</option>
+    </select>
+  </div>
 
-      <div class="form-group">
-        <label>Brick Size</label>
-        <select class="form-control" id="b-size">
-          <option value="standard">Standard (190×90×90 mm)</option>
-          <option value="modular">Modular (200×100×100 mm)</option>
-          <option value="queen">Queen (194×95×70 mm)</option>
-          <option value="king">King (257×121×70 mm)</option>
-        </select>
-      </div>
+  <!-- Brick -->
+  <div class="form-group">
+    <label>Brick Size</label>
+    <select class="form-control" id="b-size">
+      <option value="standard">Standard</option>
+      <option value="modular">Modular</option>
+      <option value="queen">Queen</option>
+      <option value="king">King</option>
+    </select>
+  </div>
 
-      <div class="form-group">
-        <label>Wall Area (m²)</label>
-        <input type="number" class="form-control" id="b-area" placeholder="e.g. 20" min="0" step="any" />
-      </div>
+  <!-- Area -->
+  <div class="form-group">
+    <label id="area-label">Wall Area (m²)</label>
+    <input type="number" class="form-control" id="b-area" />
+  </div>
 
-      <div class="form-group">
-        <label>Wall Thickness (m)</label>
-        <input type="number" class="form-control" id="b-wall-thick" placeholder="e.g. 0.23" min="0" step="any" />
-        <small style="color:var(--text-dim);font-size:0.76rem">Half-brick wall ≈ 0.115 m &nbsp;|&nbsp; Full-brick wall ≈ 0.23 m</small>
-      </div>
+  <!-- Thickness -->
+  <div class="form-group">
+    <label id="thick-label">Wall Thickness (m)</label>
+    <input type="number" class="form-control" id="b-wall-thick" />
+  </div>
 
-      <div class="info-box">
-        Mortar ratio: <strong>1:6</strong> (Cement:Sand) &nbsp;|&nbsp; Mortar joint thickness: <strong>10 mm</strong>
-      </div>
+  <!-- Mortar Ratio -->
+  <div class="form-group">
+    <label>Mortar Ratio</label>
+    <select class="form-control" id="b-ratio">
+      <option value="1:4">1:4</option>
+      <option value="1:5">1:5</option>
+      <option value="1:6" selected>1:6</option>
+    </select>
+  </div>
 
-      <div style="display:flex;gap:10px;margin-top:6px">
-        <button class="btn btn-primary" style="flex:1" onclick="calcBrick()">
-          <i class="fas fa-calculator"></i> Calculate
-        </button>
-        <button class="btn btn-secondary" onclick="resetBrick()">
-          <i class="fas fa-rotate-left"></i> Reset
-        </button>
-      </div>
+  <!-- Wastage Toggle -->
+  <div class="form-group">
+    <label>
+      <input type="checkbox" id="b-waste" checked />
+      Include 5% Wastage
+    </label>
+  </div>
 
-      <!-- Result -->
-      <div class="result-box" id="brick-result">
-        <h3><i class="fas fa-chart-bar"></i> &nbsp;Results</h3>
-        <div class="result-row">
-          <span class="label">Number of Bricks</span>
-          <span class="value"><span id="r-bricks">—</span><span class="unit">nos</span></span>
-        </div>
-        <div class="result-row">
-          <span class="label">Wall Volume</span>
-          <span class="value"><span id="r-wall-vol">—</span><span class="unit">m³</span></span>
-        </div>
-        <div class="result-row">
-          <span class="label">Mortar Volume</span>
-          <span class="value"><span id="r-mortar-vol">—</span><span class="unit">m³</span></span>
-        </div>
-        <div class="result-row">
-          <span class="label">Cement Required</span>
-          <span class="value"><span id="r-b-cement-bags">—</span><span class="unit">bags</span> &nbsp;(<span id="r-b-cement-kg">—</span><span class="unit">kg</span>)</span>
-        </div>
-        <div class="result-row">
-          <span class="label">Sand Required</span>
-          <span class="value"><span id="r-b-sand">—</span><span class="unit">m³</span></span>
-        </div>
-      </div>
+  <!-- Cost -->
+  <div class="form-group">
+    <label>Brick Price (per piece)</label>
+    <input type="number" class="form-control" id="b-price" placeholder="optional" />
+  </div>
+
+  <!-- Visual -->
+  <div class="brick-visual" id="brick-visual"></div>
+
+  <!-- Result -->
+  <div class="result-box" id="brick-result">
+    <h3>Results</h3>
+
+    <div class="result-row">
+      <span>Bricks</span>
+      <span id="r-bricks">—</span>
     </div>
 
+    <div class="result-row">
+      <span>Wall Volume</span>
+      <span><span id="r-wall-vol">—</span> <span id="unit-volume">m³</span></span>
+    </div>
+
+    <div class="result-row">
+      <span>Mortar</span>
+      <span><span id="r-mortar-vol">—</span> <span id="unit-mortar">m³</span></span>
+    </div>
+
+    <div class="result-row">
+      <span>Cement</span>
+      <span><span id="r-b-cement-bags">—</span> bags</span>
+    </div>
+
+    <div class="result-row">
+      <span>Sand</span>
+      <span><span id="r-b-sand">—</span> <span id="unit-sand">m³</span></span>
+    </div>
+
+    <div class="result-row">
+      <span>Total Cost</span>
+      <span id="r-cost">—</span>
+    </div>
+  </div>
+</div>
     <!-- Reference -->
     <div style="display:flex;flex-direction:column;gap:18px">
       <div class="card">
         <div class="section-title"><i class="fas fa-table" style="color:var(--accent)"></i> Brick Size Reference</div>
-        <table>
-          <thead>
-            <tr><th>Type</th><th>Nominal (mm)</th><th>Actual (mm)</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Standard</td><td>200×100×100</td><td>190×90×90</td></tr>
-            <tr><td>Modular</td><td>210×110×110</td><td>200×100×100</td></tr>
-            <tr><td>Queen</td><td>204×105×80</td><td>194×95×70</td></tr>
-            <tr><td>King</td><td>267×131×80</td><td>257×121×70</td></tr>
-          </tbody>
-        </table>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Nominal (L × W × H)</th>
+                <th>Actual (L × W × H)</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Standard</td>
+                <td class="b-nom" data-l="200" data-w="100" data-h="100">
+                  200 × 100 × 100 mm
+                </td>
+                <td class="b-act" data-l="190" data-w="90" data-h="90">
+                  190 × 90 × 90 mm
+                </td>
+              </tr>
+
+              <tr>
+                <td>Modular</td>
+                <td class="b-nom" data-l="210" data-w="110" data-h="110">
+                  210 × 110 × 110 mm
+                </td>
+                <td class="b-act" data-l="200" data-w="100" data-h="100">
+                  200 × 100 × 100 mm
+                </td>
+              </tr>
+
+              <tr>
+                <td>Queen</td>
+                <td class="b-nom" data-l="204" data-w="105" data-h="80">
+                  204 × 105 × 80 mm
+                </td>
+                <td class="b-act" data-l="194" data-w="95" data-h="70">
+                  194 × 95 × 70 mm
+                </td>
+              </tr>
+
+              <tr>
+                <td>King</td>
+                <td class="b-nom" data-l="267" data-w="131" data-h="80">
+                  267 × 131 × 80 mm
+                </td>
+                <td class="b-act" data-l="257" data-w="121" data-h="70">
+                  257 × 121 × 70 mm
+                </td>
+              </tr>
+            </tbody>
+          </table>
       </div>
 
       <div class="card">
         <div class="section-title"><i class="fas fa-ruler-combined" style="color:var(--accent)"></i> Wall Thickness Guide</div>
-        <table>
-          <thead>
-            <tr><th>Wall Type</th><th>Thickness</th><th>Use</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Half-brick</td><td>115 mm</td><td>Partition walls</td></tr>
-            <tr><td>Full-brick</td><td>230 mm</td><td>Load-bearing walls</td></tr>
-            <tr><td>1.5-brick</td><td>345 mm</td><td>Retaining walls</td></tr>
-            <tr><td>2-brick</td><td>460 mm</td><td>Heavy structures</td></tr>
-          </tbody>
-        </table>
+          <table>
+            <tbody>
+              <tr>
+                <td>Half-brick</td>
+                <td class="thickness" data-mm="115">115 mm</td>
+                <td>Partition walls</td>
+              </tr>
+
+              <tr>
+                <td>Full-brick</td>
+                <td class="thickness" data-mm="230">230 mm</td>
+                <td>Load-bearing walls</td>
+              </tr>
+
+              <tr>
+                <td>1.5-brick</td>
+                <td class="thickness" data-mm="345">345 mm</td>
+                <td>Retaining walls</td>
+              </tr>
+
+              <tr>
+                <td>2-brick</td>
+                <td class="thickness" data-mm="460">460 mm</td>
+                <td>Heavy structures</td>
+              </tr>
+            </tbody>
+          </table>
       </div>
 
       <div class="card">
         <div class="section-title"><i class="fas fa-lightbulb" style="color:var(--accent)"></i> Quick Facts</div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <div class="info-box" style="margin:0">Roughly <strong>500 bricks/m³</strong> of standard full-brick wall.</div>
-          <div class="info-box" style="margin:0">Add <strong>5% extra</strong> bricks for breakage & cutting wastage.</div>
-          <div class="info-box" style="margin:0">Mortar accounts for ~<strong>25–30%</strong> of wall volume.</div>
+          <div class="info-box" id="fact-bricks" data-base="500">
+            Roughly <strong>500</strong> bricks/m³ of standard full-brick wall.
+          </div>
+
+          <div class="info-box">
+            Add <strong>5% extra</strong> bricks for breakage & cutting wastage.
+          </div>
+
+          <div class="info-box" id="fact-mortar">
+            Mortar accounts for ~<strong>25–30%</strong> of wall volume.
+          </div>
         </div>
       </div>
     </div>
