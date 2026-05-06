@@ -201,56 +201,213 @@ window.addEventListener('DOMContentLoaded', () => {
 /* ================================================
    BRICK CALCULATOR
    ================================================ */
-function calcBrick() {
-  const area   = parseFloat(document.getElementById('b-area').value);
-  const thick  = parseFloat(document.getElementById('b-wall-thick').value);
-  const size   = document.getElementById('b-size').value;
-  const res    = document.getElementById('brick-result');
 
-  if (isNaN(area) || isNaN(thick) || area <= 0 || thick <= 0) {
-    showToast('Please enter valid values.', 'error'); return;
+/* ---------- BRICK DATA ---------- */
+const brickData = {
+  standard: { l:190, w:90, h:90 },
+  modular:  { l:200, w:100, h:100 },
+  queen:    { l:194, w:95, h:70 },
+  king:     { l:257, w:121, h:70 }
+};
+
+/* ---------- UNIT CONVERTERS ---------- */
+function toM(v,u){
+  if(u==='mm') return v/1000;
+  if(u==='ft') return v*0.3048;
+  if(u==='in') return v*0.0254;
+  return v;
+}
+
+function areaToM(v,u){
+  if(u==='mm') return v/1e6;
+  if(u==='ft') return v*0.092903;
+  if(u==='in') return v*0.00064516;
+  return v;
+}
+
+function convertLen(mm,u){
+  if(u==='m') return mm/1000;
+  if(u==='mm') return mm;
+  if(u==='ft') return mm/304.8;
+  if(u==='in') return mm/25.4;
+  return mm;
+}
+
+/* ---------- MAIN CALCULATION ---------- */
+function calcBrick(){
+
+  const unit = document.getElementById('b-unit').value;
+
+  let area  = parseFloat(document.getElementById('b-area').value);
+  let thick = parseFloat(document.getElementById('b-wall-thick').value);
+
+  if(!area || !thick) return;
+
+  area  = areaToM(area, unit);
+  thick = toM(thick, unit);
+
+  const size = brickData[document.getElementById('b-size').value];
+
+  const ratio = (document.getElementById('b-ratio')?.value || "1:6")
+    .split(':').map(Number);
+
+  const waste = document.getElementById('b-waste')?.checked ?? true;
+  const price = parseFloat(document.getElementById('b-price')?.value || 0);
+
+  const joint = 10; // mm mortar joint
+
+  /* brick volume with mortar joint */
+  const brickVol =
+    ((size.l + joint)/1000) *
+    ((size.w + joint)/1000) *
+    ((size.h + joint)/1000);
+
+  const wallVol = area * thick;
+
+  let bricks = wallVol / brickVol;
+
+  if(waste) bricks *= 1.05;
+  bricks = Math.ceil(bricks);
+
+  /* pure brick volume */
+  const pureBrick =
+    (size.l/1000)*(size.w/1000)*(size.h/1000);
+
+  const usedBrickVol = bricks * pureBrick;
+
+  const wetMortar = wallVol - usedBrickVol;
+  const dryMortar = wetMortar * 1.33;
+
+  const total = ratio[0] + ratio[1];
+  const cementVol = dryMortar * (ratio[0]/total);
+  const sandVol   = dryMortar * (ratio[1]/total);
+
+  const cementKg   = cementVol * 1440;
+  const cementBags = Math.ceil(cementKg/50);
+
+  /* ---------- OUTPUT ---------- */
+  set('r-bricks', bricks.toLocaleString());
+  set('r-wall-vol', wallVol.toFixed(3));
+  set('r-mortar-vol', wetMortar.toFixed(3));
+  set('r-b-cement-bags', cementBags);
+  set('r-b-cement-kg', cementKg.toFixed(0));
+  set('r-b-sand', sandVol.toFixed(3));
+
+  const cost = document.getElementById('r-cost');
+  if(cost) cost.textContent = (bricks * price).toFixed(0);
+
+  updateUnits(unit);
+  updateReferenceUnits(unit);
+  drawBricks(bricks);
+  showResult();
+}
+
+/* ---------- UI HELPERS ---------- */
+function set(id,val){
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
+}
+
+function updateUnits(u){
+
+  const area = document.getElementById('area-label');
+  const thick = document.getElementById('thick-label');
+
+  if(area) area.textContent = `Wall Area (${u}²)`;
+  if(thick) thick.textContent = `Wall Thickness (${u})`;
+
+  let v='m³';
+  if(u==='mm') v='mm³';
+  if(u==='ft') v='ft³';
+  if(u==='in') v='in³';
+
+  set('unit-volume', v);
+  set('unit-mortar', v);
+  set('unit-sand', v);
+}
+
+/* ---------- FULL REFERENCE SYSTEM ---------- */
+function updateReferenceUnits(unit){
+
+  /* 🧱 Brick Table (L × W × H) */
+  document.querySelectorAll('[data-l]').forEach(el=>{
+    const l = convertLen(+el.dataset.l, unit);
+    const w = convertLen(+el.dataset.w, unit);
+    const h = convertLen(+el.dataset.h, unit);
+
+    el.textContent =
+      `${l.toFixed(2)} × ${w.toFixed(2)} × ${h.toFixed(2)} ${unit}`;
+  });
+
+  /* 📏 Thickness Guide */
+  document.querySelectorAll('.thickness').forEach(el=>{
+    const mm = +el.dataset.mm;
+    const val = convertLen(mm, unit);
+
+    el.textContent = `${val.toFixed(2)} ${unit}`;
+  });
+
+  /* 💡 Quick Facts */
+  const fact = document.getElementById('fact-bricks');
+
+  if(fact){
+    const base = +fact.dataset.base;
+
+    let val = base;
+    let u = 'm³';
+
+    if(unit==='mm'){
+      val = base * 1e9;
+      u = 'mm³';
+    }
+    else if(unit==='ft'){
+      val = base * 35.3147;
+      u = 'ft³';
+    }
+    else if(unit==='in'){
+      val = base * 61023.7;
+      u = 'in³';
+    }
+
+    fact.innerHTML =
+      `Roughly <strong>${val.toFixed(2)}</strong> bricks/${u} of wall.`;
   }
-
-  // Brick dimensions (standard sizes in mm)
-  const brickSizes = {
-    standard: { l: 190, w: 90, h: 90 },
-    modular:  { l: 200, w: 100, h: 100 },
-    queen:    { l: 194, w: 95, h: 70 },
-    king:     { l: 257, w: 121, h: 70 }
-  };
-  const b = brickSizes[size];
-  const mortarThick = 10; // mm
-
-  // Volume of one brick with mortar (m³)
-  const brickVolMortar = ((b.l + mortarThick) * (b.h + mortarThick) * (thick * 1000)) / 1e9;
-
-  // Wall volume in m³
-  const wallVolM3 = area * (thick);
-  const numBricks = Math.ceil(wallVolM3 / brickVolMortar);
-
-  // Mortar volume ≈ 30% of wall volume
-  const mortarVol = wallVolM3 * 0.30;
-  const dryMortar = mortarVol * 1.33;
-  // Ratio 1:6 (cement:sand)
-  const cementVol  = dryMortar / 7;
-  const cementBags = Math.ceil((cementVol * 1440) / 50);
-  const sandVol    = dryMortar * (6 / 7);
-
-  document.getElementById('r-bricks').textContent       = numBricks.toLocaleString();
-  document.getElementById('r-wall-vol').textContent     = wallVolM3.toFixed(3);
-  document.getElementById('r-mortar-vol').textContent   = mortarVol.toFixed(3);
-  document.getElementById('r-b-cement-bags').textContent = cementBags;
-  document.getElementById('r-b-cement-kg').textContent   = (cementBags * 50).toFixed(0);
-  document.getElementById('r-b-sand').textContent        = sandVol.toFixed(3);
-
-  res.classList.add('show');
-  showToast('Brick calculation done!');
 }
 
-function resetBrick() {
-  ['b-area','b-wall-thick'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('brick-result').classList.remove('show');
+/* ---------- VISUAL ---------- */
+function drawBricks(n){
+  const box = document.getElementById('brick-visual');
+  if(!box) return;
+
+  box.innerHTML = '';
+
+  const count = Math.min(n, 60);
+
+  for(let i=0;i<count;i++){
+    const d = document.createElement('div');
+    d.className = 'brick-cell';
+    box.appendChild(d);
+  }
 }
+
+function showResult(){
+  document.getElementById('brick-result')?.classList.add('show');
+}
+
+/* ---------- AUTO CALC ---------- */
+document.addEventListener('input',e=>{
+  if(e.target.closest('.card')) calcBrick();
+});
+
+/* ---------- UNIT CHANGE EVENT ---------- */
+document.getElementById('b-unit')?.addEventListener('change',()=>{
+  const u = document.getElementById('b-unit').value;
+
+  updateUnits(u);
+  updateReferenceUnits(u);
+  calcBrick();
+});
+
 
 /* ================================================
    UNIT CONVERTER
