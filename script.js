@@ -204,7 +204,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* ---------- BRICK DATA ---------- */
 const brickData = {
-  standard: { l:190, w:90, h:90 },
+  standard: { l:241, w:114, h:70 },
   modular:  { l:200, w:100, h:100 },
   queen:    { l:194, w:95, h:70 },
   king:     { l:257, w:121, h:70 }
@@ -246,15 +246,32 @@ function calcBrick(){
   area  = areaToM(area, unit);
   thick = toM(thick, unit);
 
-  const size = brickData[document.getElementById('b-size').value];
+  /* ---------- OPENINGS ---------- */
+  const openingEnabled =
+    document.getElementById('enable-opening')?.checked;
 
-  const ratio = (document.getElementById('b-ratio')?.value || "1:6")
-    .split(':').map(Number);
+  if(openingEnabled){
 
-  const waste = document.getElementById('b-waste')?.checked ?? true;
-  const price = parseFloat(document.getElementById('b-price')?.value || 0);
+    let opening =
+      parseFloat(document.getElementById('b-opening-area')?.value || 0);
 
-  const joint = 10; // mm mortar joint
+    opening = areaToM(opening, unit);
+
+    area -= opening;
+
+    if(area < 0) area = 0;
+  }
+
+  const size =
+    brickData[document.getElementById('b-size').value];
+
+  const waste =
+    document.getElementById('b-waste')?.checked ?? true;
+
+  const price =
+    parseFloat(document.getElementById('b-price')?.value || 0);
+
+  const joint = 10;
 
   /* brick volume with mortar joint */
   const brickVol =
@@ -267,40 +284,103 @@ function calcBrick(){
   let bricks = wallVol / brickVol;
 
   if(waste) bricks *= 1.05;
+
   bricks = Math.ceil(bricks);
 
-  /* pure brick volume */
-  const pureBrick =
-    (size.l/1000)*(size.w/1000)*(size.h/1000);
+  /* ---------- DEFAULT OUTPUT ---------- */
+  let wetMortar = 0;
+  let cementBags = 0;
+  let sandVol = 0;
 
-  const usedBrickVol = bricks * pureBrick;
+  /* ---------- OPTIONAL MORTAR ---------- */
+  const ratioEnabled =
+    document.getElementById('enable-ratio')?.checked;
 
-  const wetMortar = wallVol - usedBrickVol;
-  const dryMortar = wetMortar * 1.33;
+  if(ratioEnabled){
 
-  const total = ratio[0] + ratio[1];
-  const cementVol = dryMortar * (ratio[0]/total);
-  const sandVol   = dryMortar * (ratio[1]/total);
+    const ratio =
+      document.getElementById('b-ratio')
+      .value
+      .split(':')
+      .map(Number);
 
-  const cementKg   = cementVol * 1440;
-  const cementBags = Math.ceil(cementKg/50);
+    const pureBrick =
+      (size.l/1000) *
+      (size.w/1000) *
+      (size.h/1000);
+
+    const usedBrickVol = bricks * pureBrick;
+
+    wetMortar = wallVol - usedBrickVol;
+
+    const dryMortar = wetMortar * 1.33;
+
+    const total = ratio[0] + ratio[1];
+
+    const cementVol =
+      dryMortar * (ratio[0]/total);
+
+    sandVol =
+      dryMortar * (ratio[1]/total);
+
+    const cementKg = cementVol * 1440;
+
+    cementBags = Math.ceil(cementKg/50);
+  }
 
   /* ---------- OUTPUT ---------- */
+
   set('r-bricks', bricks.toLocaleString());
+
   set('r-wall-vol', wallVol.toFixed(3));
-  set('r-mortar-vol', wetMortar.toFixed(3));
-  set('r-b-cement-bags', cementBags);
-  set('r-b-cement-kg', cementKg.toFixed(0));
-  set('r-b-sand', sandVol.toFixed(3));
+
+  set(
+    'r-mortar-vol',
+    ratioEnabled ? wetMortar.toFixed(3) : '—'
+  );
+
+  set(
+    'r-b-cement-bags',
+    ratioEnabled ? cementBags : '—'
+  );
+
+  set(
+    'r-b-sand',
+    ratioEnabled ? sandVol.toFixed(3) : '—'
+  );
 
   const cost = document.getElementById('r-cost');
-  if(cost) cost.textContent = (bricks * price).toFixed(0);
+
+  if(cost)
+    cost.textContent =
+      price ? (bricks * price).toFixed(0) : '—';
 
   updateUnits(unit);
   updateReferenceUnits(unit);
   drawBricks(bricks);
   showResult();
 }
+
+/* ---------- OPTIONAL TOGGLES ---------- */
+
+document.getElementById('enable-ratio')
+?.addEventListener('change',function(){
+
+  document.getElementById('b-ratio')
+    .disabled = !this.checked;
+
+  calcBrick();
+});
+
+document.getElementById('enable-opening')
+?.addEventListener('change',function(){
+
+  document.getElementById('opening-fields')
+    .style.display =
+      this.checked ? 'block' : 'none';
+
+  calcBrick();
+});
 
 /* ---------- UI HELPERS ---------- */
 function set(id,val){
