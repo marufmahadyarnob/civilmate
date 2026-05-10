@@ -115,14 +115,40 @@
     <input type="number" class="form-control" id="b-wall-thick" />
   </div>
 
-  <!-- Mortar Ratio -->
+  <!-- Mortar Ratio Optional -->
   <div class="form-group">
-    <label>Mortar Ratio</label>
-    <select class="form-control" id="b-ratio">
+    <label>
+      <input type="checkbox" id="enable-ratio" />
+      Use Mortar Ratio
+    </label>
+
+    <select class="form-control" id="b-ratio" disabled>
       <option value="1:4">1:4</option>
       <option value="1:5">1:5</option>
       <option value="1:6" selected>1:6</option>
     </select>
+  </div>
+
+  <!-- Opening Optional -->
+  <div class="form-group">
+
+    <label>
+      <input type="checkbox" id="enable-opening" />
+      Subtract Openings (Doors/Windows)
+    </label>
+
+    <div id="opening-fields" style="display:none;margin-top:10px">
+
+      <input type="number"
+            class="form-control"
+            id="b-opening-area"
+            placeholder="Opening Area" />
+
+      <small style="color:var(--text-muted)">
+        Total door/window area
+      </small>
+
+    </div>
   </div>
 
   <!-- Wastage Toggle -->
@@ -193,11 +219,19 @@
             <tbody>
               <tr>
                 <td>Standard</td>
-                <td class="b-nom" data-l="200" data-w="100" data-h="100">
-                  200 × 100 × 100 mm
+
+                <td class="b-nom"
+                    data-l="254"
+                    data-w="127"
+                    data-h="76">
+                  10 × 5 × 3 in
                 </td>
-                <td class="b-act" data-l="190" data-w="90" data-h="90">
-                  190 × 90 × 90 mm
+
+                <td class="b-act"
+                    data-l="241"
+                    data-w="114"
+                    data-h="70">
+                  9.5 × 4.5 × 2.75 in
                 </td>
               </tr>
 
